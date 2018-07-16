@@ -1,6 +1,6 @@
-# To be defined 
+# [Spark Batch] KickStarter Project Success
 
-The **Spark Batch Challenge** consists in creating a **tbf** using Spark and other 
+The **Spark Batch Challenge** consists in creating a **prediction engine** for KickStarter Projects using Spark and other 
 data-engineering frameworks.  
 
 ## Requirements
@@ -12,8 +12,8 @@ data-engineering frameworks.
 
 ## Download the data
 
-This challenge uses a public dataset [available here (kaggle)](https://www.kaggle.com/rounakbanik/the-movies-dataset/home)
-that contains metadata of over 45,000 movies and 2.6 million rating from nearly 270,000 users.
+This challenge uses a public dataset [available here (kaggle)](https://www.kaggle.com/kemical/kickstarter-projects)
+that contains the data of over 300,000 kickstarter projects.
 
 To download the data you'll have to create an account at [Kaggle](https://www.kaggle.com) 
 and install their [command-line API](https://github.com/Kaggle/kaggle-api).
@@ -23,10 +23,11 @@ and install their [command-line API](https://github.com/Kaggle/kaggle-api).
 * Setup the Kaggle command line tool.
     * Install with pip: `pip install kaggle`
     * Get a api-key from Kaggle (my account > create new api token) and place it at: `~/.kaggle/kaggle.json`
-* Download the dataset: `kaggle datasets download -d rounakbanik/the-movies-dataset`
+* Download the dataset: `kaggle datasets download -d kemical/kickstarter-projects`
     * This command should download the data in the kaggle directory created in the prev step. 
+    * You might need to add an alias: `alias kaggle="~/.local/bin/kaggle"`
 * Move the relevant files to the data directory.
-    * Run from this project directory: `cp ~/.kaggle/datasets/rounakbanik/the-movies-dataset/*.csv data/`
+    * Run from this project directory: `cp ~/.kaggle/datasets/kemical/kickstarter-projects/*201801.csv data/`
   
 ## (Optional) Visualize the dataset
 
