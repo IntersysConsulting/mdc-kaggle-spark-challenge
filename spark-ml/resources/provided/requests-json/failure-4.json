@@ -1,0 +1,12 @@
+{
+  "id": "record-failure-004",
+  "arguments": {
+    "main_category": "Crafts",
+    "currency": "SEK",
+    "goal": 35000.0,
+    "pledged": 100.0,
+    "backers": 1.0,
+    "country": "SE",
+    "date_diff": 25.0
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "record-success-002",
+  "arguments": {
+    "main_category": "Art",
+    "currency": "AUD",
+    "goal": 5000.0,
+    "pledged": 1306.15,
+    "backers": 39.0,
+    "country": "US",
+    "date_diff": 50.0
+  }
+}

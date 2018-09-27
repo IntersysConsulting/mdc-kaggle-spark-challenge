@@ -1,0 +1,12 @@
+{
+  "id": "record-failure-001",
+  "arguments": {
+    "main_category": "Art",
+    "currency": "AUD",
+    "goal": 700.0,
+    "pledged": 5.0,
+    "backers": 1.0,
+    "country": "AU",
+    "date_diff": 48.0
+  }
+}

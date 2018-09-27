@@ -1,0 +1,12 @@
+{
+  "id": "record-failure-003",
+  "arguments": {
+    "main_category": "Comics",
+    "currency": "MXN",
+    "goal": 60000.0,
+    "pledged": 6820.0,
+    "backers": 16.0,
+    "country": "MX",
+    "date_diff": 60.0
+  }
+}

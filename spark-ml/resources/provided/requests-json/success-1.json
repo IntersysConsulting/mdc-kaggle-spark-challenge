@@ -1,0 +1,12 @@
+{
+  "id": "record-success-001",
+  "arguments": {
+    "main_category": "Technology",
+    "currency": "USD",
+    "goal": 10000.0,
+    "pledged": 13855.0,
+    "backers": 88.0,
+    "country": "US",
+    "date_diff": 30.0
+  }
+}

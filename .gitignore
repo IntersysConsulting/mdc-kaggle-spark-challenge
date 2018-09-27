@@ -68,3 +68,9 @@ jrebel.lic
 /.lib/
 .ipynb_checkpoints
 data/
+
+*.zip
+ks-projects-*
+model/
+online-predictions/
+predictions/
