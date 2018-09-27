@@ -49,7 +49,7 @@ Where:
 **Example** The soution of the first problem should execute when running:
 * `sbt "runMain com.intersys.mdc.challenge.spark.ml.problem1.Solution"`
 
-## Problem I : ML Algorithm
+## Problem 1 : ML Algorithm
 
 In this problem you have to train/test a machine learning model that predicts
 the success or failure of a Kickstarter project.
@@ -84,7 +84,7 @@ the success or failure of a Kickstarter project.
         * Example: `resources/output/model/model-95.pmml`
 * **Running the application :** all the previous steps should be executed when running:
     * `sbt "runMain com.intersys.mdc.challenge.spark.ml.problem1.Solution"`
-## Problem II : ML Scoring
+## Problem 2 : ML Scoring
 
 In this problem you have to create an API using [Docker](https://www.docker.com/) 
 and the [Openscoring](https://github.com/openscoring/openscoring) REST web service. 

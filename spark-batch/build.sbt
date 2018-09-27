@@ -4,19 +4,22 @@ lazy val root = (project in file(".")).
   settings(
     inThisBuild(List(
       organization := "com.intersys",
-      scalaVersion := "2.11.11",
+      scalaVersion := "2.11.8",
       version      := "0.0.0"
     )),
     name := "spark-batch",
     resolvers += "Spark Packages Repo" at "https://dl.bintray.com/spark-packages/maven",
     libraryDependencies ++= {
-      val configVersion = "1.3.1"
-      val sparkVersion  = "2.2.0"
-      val cassandraConnectorVersion = "2.3.1"
+      val sparkVersion  = "2.3.0"
       Seq(
-        "com.typesafe" % "config" % configVersion,
-        "org.apache.spark"   %% "spark-sql" % sparkVersion,
-        "com.datastax.spark" %% "spark-cassandra-connector" % cassandraConnectorVersion,
+        "com.typesafe" % "config" % "1.3.1",
+        // Spark
+        "org.apache.spark" %% "spark-core"  % sparkVersion,
+        "org.apache.spark" %% "spark-sql"   % sparkVersion,
+        // Logging
+        "ch.qos.logback" % "logback-classic" % "1.2.3",
+        "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
+        // Test
         scalaTest % Test
       )
     }

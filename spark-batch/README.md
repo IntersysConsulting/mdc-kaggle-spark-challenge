@@ -1,130 +1,175 @@
-# [Spark Batch] KickStarter Project Success
+# Spark Batch Challenge: Gutenberg Words
 
-The **Spark Batch Challenge** consists in creating a **prediction engine** for KickStarter Projects using Spark and other 
-data-engineering frameworks. 
+The **Spark Batch Challenge** consists on analyzing the text of the 
+Gutenberg Project using Apache Spark as a batch processing engine. 
 
-**Problem definition**
+## Download the data 
 
-Create a **REST API** that will serve as a prediction engine for Kickstarter Projects 
-and to perform basic CRUD operations.
-* Get request of a given project at `http://localhost:8080/kickstarter/projects/predict` should return a json response
-indicating if the project will be successful or not in the platform. 
-* Put request of a given project at `http://localhost:8080/kicksterter/projects/submit` should add the project to 
-a Cassandra database. 
+This challenge uses the data of the [Gutenberg Project](https://www.gutenberg.org/) in txt-format.
 
-## Requirements
-* Scala programming language
-* SBT (simple build tool)
-* Spark
-* Python 3.x
-* Cassandra and cql
-
-## Download the data
-
-This challenge uses a public dataset [available here (kaggle)](https://www.kaggle.com/kemical/kickstarter-projects)
-that contains the data of over 300,000 kickstarter projects.
-
-To download the data you'll have to create an account at [Kaggle](https://www.kaggle.com) 
-and install their [command-line API](https://github.com/Kaggle/kaggle-api).
-
-**Debian-based OS**
-* Create an empty data directory from this project: `mkdir data`
-* Setup the Kaggle command line tool.
-    * Install with pip: `pip install kaggle`
-    * Get a api-key from Kaggle (my account > create new api token) and place it at: `~/.kaggle/kaggle.json`
-* Download the dataset: `kaggle datasets download -d kemical/kickstarter-projects`
-    * This command should download the data in the kaggle directory created in the prev step. 
-    * You might need to add an alias: `alias kaggle="~/.local/bin/kaggle"`
-* Move the relevant files to the data directory.
-    * Run from this project directory: `cp ~/.kaggle/datasets/kemical/kickstarter-projects/*201801.csv data/`
-  
-## (Optional) Visualize the dataset
-
-This section requires you to perform a basic data analysis before the data-engineering section. 
-Follow the guideline provided in the Jupyter Notebook **data-visualization.ipynb**.
-
-### Install Jupyter notebook and dependencies
-**Debian-based OS**
-* Install python and pip: `sudo apt install python3 ipython3 python3-pip`
-* Install jupyter notebook: `pip3 install jupyter`
-* Install dependencies: `pip3 install -r python-requirements.txt`
-* (Maybe) You might need to install tkinter package in order to use matplotlib. Run in the command line:
-  * Install: `sudo apt install python3-tk`
-  * Test: `python -c "import matplotlib.pyplot as plt; plt.show()"`
-
-### Use Jupyter notebook
-
-**Debian-based OS**
-* Start jupyter notebook by running the following in the terminal: `jupyter notebook`
-* Now you can open/edit/create jupyter nobooks (.ipynb files).
-
-## Upload data to Cassandra
-
-The challenge consists to 
-
-**Debian-based OS**
-1. Install Cassandra from the [official website](http://cassandra.apache.org/).
-2. Start the Cassandra service: `sudo service cassandra start`
-3. Use `cqlsh` to create the keyspace and table.
-    * Create the keyspace: 
-    ```
-    CREATE KEYSPACE spark WITH REPLICATION = {'class':'SimpleStrategy', 'replication_factor':1};
-    ```
-    * Create the table: 
-    ```cqlsh
-    CREATE TABLE spark.kickstarter (
-      "ID" bigint PRIMARY KEY,
-      name text,
-      category text,
-      main_category text,
-      country text,
-      currency text,
-      deadline timestamp,
-      goal double,
-      launched timestamp,
-      pledged double,
-      state text,
-      backers int,
-      "usd pledged" double,
-      usd_pledged_real double,
-      usd_goal_real double,
-    );
-    ```
-4. Upload the csv data into Cassandra by running the python script named `upload_data.py`.
-    * Note that the `python_requirements.txt` file contains the libraries needed to run the script.
-    * Install the requirements: `pip install -r python_requirements.txt`
-    * Run the script: `python3 upload_data.py`
-
-## [Task 1] Create a predictive model using Spark 
-The first task consists in creating a prediction model using Spark. Consider the following:
-* Automate the steps required to tune the model.
-* Create a well-defined pipeline for feature transformation, generation and cleaning. 
-* Use a **random search algorithm** to test different configurations of hyperparameters.
-    * Save the model type, configuration and score in a Cassandra table (e.g., `model`)
-* Save the best model using the PMML standard. 
-
-The task should start when running:
+To download the complete content of the Gutenberg online library run (bash):
+```bash
+curl -sSL https://raw.githubusercontent.com/RHDZMOTA/spark-wordcount/develop/gutenberg.sh | sh
 ```
-sbt "run com.intersys.mdc.challenge.spark.batch.Task1"
+Depending on your network speed this can take up to 3 hours. 
+
+You can see the "footprint" of the content with:
+* Number of books: `ls -l gutenberg | wc -l`
+* Data size: `du -sh gutenberg`
+
+We will work with a random sample of 5000 books. Run the following command to create the sample: 
+```bash
+mkdir gutenberg-sample && ls gutenberg/ | shuf -n 5000 | xargs -I _ cp gutenberg/_ gutenberg-sample/_
 ```
 
-## [Task 2] Create a REST API to serve the model
-The second task consists in creating an independent REST API to serve the model and interact with the 
-database. 
+## Problem definition
 
-The task should start when running:
+In this section we define the scope and tasks for each problem. 
+
+Each problem is evaluated sequentially due to possible dependency with advanced tasks of further problems.
+The reviewer will evaluate the output for each problem, clean code and best practices. The following convention will be used:
+
+The solution of problem `i` should be executed when running: 
+```bash
+sbt "runMain com.intersys.mdc.challenge.spark.batch.problem<1>.Solution"
 ```
-sbt "run com.intersys.mdc.challenge.spark.batch.Task2"
+
+Where:
+```text
+    i : is the number of the problem (i.e., 1, 2, 3)
 ```
+
+**Example** The solution of the first problem should execute when running:
+* `sbt "runMain com.intersys.mdc.challenge.batch.problem1.Solution"`
+
+## Problem I  : Zipf's Law
+
+The [Zipf's law](https://en.wikipedia.org/wiki/Zipf%27s_law) is an empirical law that 
+states that for a large sample of words, the frequency of a given word is inversely 
+proportional to the rank on the word-count table. Therefore, a given word with rank `i`
+has a frequency proportional to `1/i`. This second most frequent word will occur about 
+half the times (1/2) of the first most frequent word. 
+
+In this problem you'll have e to test the Zipf's Law using the words contained on the books of 
+the [Gutenberg Project](https://www.gutenberg.org/). 
+
+**Keypoints**
+
+* Use the [Apache Spark](http://spark.apache.org/) [Scala API](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.package).
+    * Demonstrate understanding of the [Dataset[T]](https://spark.apache.org/docs/latest/sql-programming-guide.html#datasets-and-dataframes)
+    datatype.
+    * Use Scala's `case class` to represent domain models. 
+* **Output file** should be a single csv-file contained in `resources/output/zipf`.
+    * Must have the following columns: `word`, `count`, `frequency`, `zipf`
+    * Must be sorted (descending) by the `count` column. 
+* **Running the application**
+    * `sbt "runMain com.intersys.mdc.challenge.spark.batch.problem1.Solution"`
+
+Columns:
+```text
+    word      : a column containing the unique words in the gutenberg-sample folder. 
+    count     : the number of appearance of a word in the project. 
+    frequency : count / total_unique_words
+    rank      : position of the word when the dataset is ordered. 
+    zipf      : estimation fo the zipfian distribution (i.e. 1 / rank)
+```
+
+## Problem 2 : Word Prediction Database
+
+In this problem you'll have to populate a [mongodb](https://www.mongodb.com/) 
+database from Apache Spark. The goal is to create a collection that contains 
+each unique word and the probable following words.
+
+Example: 
+
+```text
+Consider the following text as the complete knowledge-base: "a b c a b c d e a a c"
+```
+
+We know that the `a` word is followed by `b`, `a`, and `c`. We can represent this with the 
+following json: 
+```json
+{
+  "word": "a",
+  "next": [
+    {"nw": "b", "p": 0.5},
+    {"nw": "a", "p": 0.25},
+    {"nw": "c", "p": 0.25}
+  ]
+}
+```
+
+Where:
+```text
+    word : Represent a word in the Gutenberg Project sample.
+    next : Is a list of possible following words. 
+    nw   : Is a possible "following word" for the original "word".
+    p    : Is the probability of finding nw as decimal (note that the sum of all "p" must be 1.0).
+```
+ 
+
+**Keypoints**
+
+* Using the `gutenberg-sample` data create a `Dataset[WordRegister]` where `WordRegister` is the following case class: 
+```scala
+final case class WordRegister(word: String, next: List[Word.NextWord])
+
+object WordRegister {
+  final case class NextWord(nw: String, p: Double)
+}
+```
+
+* Use the library of your choice (e.g. [circe](https://github.com/circe/circe)) to be able to represent the 
+a `WordRegister` instance as a json-string:
+```json
+{
+  "word": "some-word",
+  "next": [
+    {"nw": "next-word-1", "p": 0.7},
+    {"nw": "next-word-2", "p": 0.2},
+    {"nw": "next-word-3", "p": 0.1} ]
+}
+```
+* Populate a MongoDB collection with the data contained on the `Dataset[WordRegister]`.
+    * See [MongoDB Spark Connector](https://docs.mongodb.com/spark-connector/master/scala/write-to-mongodb/)
+        * Database name `gutenberg`
+        * Collection `words`
+    * Use [Docker](https://www.docker.com/) to create a container with a Mongodb image.
+        * `docker run -d -p 27017:27017 mongo`
+* **Running the application** should perform the Spark transformation and populate the mongodb database. 
+    * `sbt "runMain com.intersys.mdc.challenge.spark.batch.problem2.Solution"`
+    * You can query your results form the command line:
+        * `sudo apt install mongodb-clients`
+        * `mongo <ip-address>/gutenberg`
+        * `db.words.find()`
+
+
+## Problem 3: Word Prediction Engine
+Using the resulting mongodb collection from the previous problem you'll have to create a 
+REST API to predict the probable following words given an initial word. 
+
+**Keypoints**
+
+* Create a REST API using Scala (recommended: [Akka HTTP](https://doc.akka.io/docs/akka-http/current/server-side/index.html)).
+    * Connect to mongodb using the official [Scala Driver](https://github.com/mongodb/mongo-scala-driver)
+* The API should expose the following endpoints:
+    * Next possible words
+        * Get request: `http://localhost:8080/gutenberg/predict/next?word="a"`
+        * Response: `{"words": ["b", "a", "c"], "probability": [0.5. 0.25, 0.25]}`
+    * Random guess
+        * Get request: `http://localhost:8080/gutenberg/predict/random?word="a"`
+        * Response: `{"guess": "a"}`
+* **Running the application** the API should be up and running after the following command.
+    * `sbt "runMain "com.intersys.mdc.challenge.spark.batch.problem3.Solution`
 
 ## Authors and contributions
 
 Please add an `issue` if you identify any problems or bugs in the code. Feel free to contact the authors and 
 contributors for any question. 
 
-* [Rodrigo Hernández Mota](https://www.linkedin.com/in/rhdzmota/) (rhdzmota)
+* [Rodrigo Hernández Mota](https://www.linkedin.com/in/rhdzmota/)
 
 ## License
-Contact **Intersys Consulting** for further information. 
+See the `LICENCSE.md` file.
 
 
