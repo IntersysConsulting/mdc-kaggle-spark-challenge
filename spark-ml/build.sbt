@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
       scalaVersion := "2.11.8",
       version      := "0.0.0"
     )),
-    name := "spark-batch",
+    name := "spark-ml",
     resolvers += "Spark Packages Repo" at "https://dl.bintray.com/spark-packages/maven",
     libraryDependencies ++= {
       val configVersion = "1.3.1"
